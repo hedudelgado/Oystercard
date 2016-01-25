@@ -23,4 +23,23 @@ describe Oystercard do
 		expect(subject.balance).to eq 0
         end
     end
+
+    describe'#journey?' do
+        it 'should return false at first as the oyster' do
+        expect(subject.journey?).to eq false
+        end
+    end
+    describe '#touch_in' do 
+        it 'should change the journey status of the oyster card to true' do 
+        subject.touch_in
+        expect(subject.journey?).to eq true
+        end
+    end
+      describe '#touch_out' do 
+        it 'should change the journey status of the oyster card to false' do 
+        subject.touch_in
+        subject.touch_out
+        expect(subject.journey?).to eq false
+        end
+    end
 end
