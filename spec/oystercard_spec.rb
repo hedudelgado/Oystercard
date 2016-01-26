@@ -4,6 +4,8 @@ describe OysterCard do
   it "Balance = 0" do
     expect(subject.balance).to eq 0
   end
+
+
 describe "#top_up"do
   it "tops up the card is empty"do
     subject.top_up(65)
@@ -18,17 +20,21 @@ describe "#top_up"do
   expect{ subject.top_up(OysterCard::MAX_BALANCE + 1) }.to raise_error "Amount exceeds the limit: #{OysterCard::MAX_BALANCE}"
   end
 end
+
+=begin
   describe '#deduct' do
   it 'demostrates tha the money is actually deducted' do
   subject.top_up(10)
   expect{ subject.deduct 6}. to change{ subject.balance}.by -6
   end
+
   it 'return the amount deducted' do
   subject.top_up(10)
   expect(subject.deduct 6).to eq 6
   end
   end
   it { is_expected.to respond_to(:in_journey?) }
+=end
 
   describe '#touch_in'do
     it "allows you to touch in"do
@@ -36,10 +42,12 @@ end
       subject.touch_in
       expect(subject.in_journey?).to eq true
     end
-    it 'raise an error when the oyester does not have a minimum balance' do 
+    it 'raise an error when the oyester does not have a minimum balance' do
       expect{subject.touch_in}.to raise_error 'not enough funds'
     end
   end
+
+
   describe '#touch_out'do
     it 'allows you to touch out'do
       subject.top_up(OysterCard::MIN_BALANCE)
@@ -47,5 +55,11 @@ end
       subject.touch_out
       expect(subject.in_journey?).to eq false
     end
+
+    it 'deducts fare from balance'do
+    subject.top_up(OysterCard::MIN_BALANCE)
+    subject.touch_in
+    expect{subject.touch_out}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
+  end
   end
 end
