@@ -6,7 +6,7 @@ class OysterCard
 
 	  def initialize
     	@balance = 0
-      @journey_history = []
+      @journey_history = {}
   	end
 
   	def top_up(value)
@@ -20,7 +20,9 @@ class OysterCard
     end
 
     def touch_out(station)
-      @journey_history << [@entry_station, station]
+      x = @journey_history.size + 1
+      @journey_history["entry_station #{x}"] =  @entry_station
+      @journey_history["exit_station #{x}"] = station
       deduct(MIN_BALANCE)
       @entry_station = nil
     end

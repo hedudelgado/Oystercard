@@ -74,13 +74,14 @@ end
     end
   end
   it 'has a journey history'do
-  expect(subject.journey_history).to eq []
+  expect(subject.journey_history.to eq {}
   end
+
   it 'records the journey'do
   subject.top_up(OysterCard::MIN_BALANCE)
   subject.touch_in(station)
   subject.touch_out(station)
-  expect(subject.journey_history).to eq [[station,station]]
+  expect(subject.journey_history).to include station  #{"entry_station 1" => station, "exit_station" => station}
   end
 
 end
