@@ -45,7 +45,7 @@ end
     it 'raise an error when the oyester does not have a minimum balance' do
       expect{subject.touch_in(station)}.to raise_error 'not enough funds'
     end
-    it 'will memorize the station where you get in' do 
+    it 'will memorize the station where you get in' do
       subject.top_up(OysterCard::MIN_BALANCE)
       subject.touch_in(station)
       expect(subject.entry_station).to eq station
@@ -58,19 +58,29 @@ end
     it 'allows you to touch out'do
       subject.top_up(OysterCard::MIN_BALANCE)
       subject.touch_in(station)
-      subject.touch_out
+      subject.touch_out(station)
       expect(subject.in_journey?).to eq false
     end
     it 'deducts fare from balance'do
     subject.top_up(OysterCard::MIN_BALANCE)
     subject.touch_in(station)
-    expect{subject.touch_out}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
+    expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
   end
-    it 'the card forgets the station' do 
+    it 'the card forgets the station' do
     subject.top_up(OysterCard::MIN_BALANCE)
     subject.touch_in(station)
-    subject.touch_out
+    subject.touch_out(station)
     expect(subject.entry_station).to eq nil
     end
   end
+  it 'has a journey history'do
+  expect(subject.journey_history).to eq []
+  end
+  it 'records the journey'do
+  subject.top_up(OysterCard::MIN_BALANCE)
+  subject.touch_in(station)
+  subject.touch_out(station)
+  expect(subject.journey_history).to eq [[station,station]]
+  end
+
 end
