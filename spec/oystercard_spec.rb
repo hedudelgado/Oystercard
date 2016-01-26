@@ -1,6 +1,6 @@
 require "make_oystercard.rb"
 describe OysterCard do
-
+  let(:station){double :station}
   it "Balance = 0" do
     expect(subject.balance).to eq 0
   end
@@ -39,27 +39,38 @@ end
   describe '#touch_in'do
     it "allows you to touch in"do
       subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject.in_journey?).to eq true
     end
     it 'raise an error when the oyester does not have a minimum balance' do
-      expect{subject.touch_in}.to raise_error 'not enough funds'
+      expect{subject.touch_in(station)}.to raise_error 'not enough funds'
     end
+    it 'will memorize the station where you get in' do 
+      subject.top_up(OysterCard::MIN_BALANCE)
+      subject.touch_in(station)
+      expect(subject.entry_station).to eq station
+    end
+
   end
 
 
   describe '#touch_out'do
     it 'allows you to touch out'do
       subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in
+      subject.touch_in(station)
       subject.touch_out
       expect(subject.in_journey?).to eq false
     end
-
     it 'deducts fare from balance'do
     subject.top_up(OysterCard::MIN_BALANCE)
-    subject.touch_in
+    subject.touch_in(station)
     expect{subject.touch_out}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
   end
+    it 'the card forgets the station' do 
+    subject.top_up(OysterCard::MIN_BALANCE)
+    subject.touch_in(station)
+    subject.touch_out
+    expect(subject.entry_station).to eq nil
+    end
   end
 end
