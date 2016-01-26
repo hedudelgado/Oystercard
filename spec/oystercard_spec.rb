@@ -1,6 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do
+	let(:station){ double :station }
 	describe 'balance' do 
     	it 'should return a balance' do
     	expect(subject.balance).to eq 0
@@ -26,26 +27,36 @@ describe Oystercard do
     describe '#touch_in' do 
         it 'should change the journey status of the oyster card to true' do
         subject.top_up(5) 
-        subject.touch_in
+        subject.touch_in(station)
         expect(subject.journey?).to eq true
         end
           it 'raise an error when the oyster has less than 1 pound founds' do 
-        expect{subject.touch_in}.to raise_error 'not enough founds, need to top up'
+        expect{subject.touch_in(station)}.to raise_error 'not enough founds, need to top up'
+        end
+        it 'stores the entry station' do
+        	subject.top_up(5) 
+        	subject.touch_in(station)
+        	expect(subject.entry_station).to eq station
         end
     end
 
-      describe '#touch_out' do 
+    describe '#touch_out' do 
         it 'should change the journey status of the oyster card to false' do
         subject.top_up(5)  
-        subject.touch_in
+        subject.touch_in(station)
         subject.touch_out
         expect(subject.journey?).to eq false
         end
           it 'should change the journey status of the oyster card to false' do
         subject.top_up(5)  
-        subject.touch_in
+        subject.touch_in(station)
         expect {subject.touch_out}.to change{subject.balance}.by(-Oystercard::MIN)
         end
+        it 'change the status of the entry station to nil' do
+        subject.top_up(5)
+        subject.touch_in(station)
+        subject.touch_out
+        expect(subject.entry_station).to eq nil
+    	end
     end
-   
 end
