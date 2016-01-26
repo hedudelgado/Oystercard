@@ -6,20 +6,20 @@ describe OysterCard do
   end
 
 
-describe "#top_up"do
-  it "tops up the card is empty"do
-    subject.top_up(65)
-    expect(subject.balance).to eq 65
+  describe "#top_up"do
+    it "tops up the card is empty"do
+      subject.top_up(65)
+      expect(subject.balance).to eq 65
+    end
+    it "tops up the card when the card has money"do
+      subject.top_up(10)
+      subject.top_up(20)
+      expect(subject.balance).to eq 30
+    end
+    it "has a maximum balance"do
+      expect{ subject.top_up(OysterCard::MAX_BALANCE + 1) }.to raise_error "Amount exceeds the limit: #{OysterCard::MAX_BALANCE}"
+    end
   end
-  it "tops up the card when the card has money"do
-  subject.top_up(10)
-  subject.top_up(20)
-  expect(subject.balance).to eq 30
-  end
-  it "has a maximum balance"do
-  expect{ subject.top_up(OysterCard::MAX_BALANCE + 1) }.to raise_error "Amount exceeds the limit: #{OysterCard::MAX_BALANCE}"
-  end
-end
 
 =begin
   describe '#deduct' do
@@ -62,26 +62,33 @@ end
       expect(subject.in_journey?).to eq false
     end
     it 'deducts fare from balance'do
-    subject.top_up(OysterCard::MIN_BALANCE)
-    subject.touch_in(station)
-    expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
-  end
-    it 'the card forgets the station' do
-    subject.top_up(OysterCard::MIN_BALANCE)
-    subject.touch_in(station)
-    subject.touch_out(station)
-    expect(subject.entry_station).to eq nil
+      subject.top_up(OysterCard::MIN_BALANCE)
+      subject.touch_in(station)
+      expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
     end
-  end
-  it 'has a journey history'do
-  expect(subject.journey_history.to eq {}
+    it 'the card forgets the station' do
+      subject.top_up(OysterCard::MIN_BALANCE)
+      subject.touch_in(station)
+      subject.touch_out(station)
+      expect(subject.entry_station).to eq nil
+      end
   end
 
-  it 'records the journey'do
-  subject.top_up(OysterCard::MIN_BALANCE)
-  subject.touch_in(station)
-  subject.touch_out(station)
-  expect(subject.journey_history).to include station  #{"entry_station 1" => station, "exit_station" => station}
+  it 'has a journey history'do
+    expect(subject.journey_history).to be_empty
+  end
+
+  let(:journey){ {entry_station: station, exit_station: station} }  
+  #journey will be the variable we will 
+  #compare later on when I call include.. 
+  #station are the double we set at the top and we are including in journey variable
+  it 'stores a journey' do
+    subject.top_up(OysterCard::MIN_BALANCE)
+    subject.touch_in(station) #stations are the doubles we set in the beggining
+    subject.touch_out(station)
+    expect(subject.journey_history).to include journey 
+    #the the test pass the variables to touch_in and touch_out and journey history
+    #return the hash that is begin compared with {entry_station: station, exit_station: station} 
   end
 
 end
