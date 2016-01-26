@@ -32,12 +32,17 @@ end
 
   describe '#touch_in'do
     it "allows you to touch in"do
+      subject.top_up(OysterCard::MIN_BALANCE)
       subject.touch_in
       expect(subject.in_journey?).to eq true
+    end
+    it 'raise an error when the oyester does not have a minimum balance' do 
+      expect{subject.touch_in}.to raise_error 'not enough funds'
     end
   end
   describe '#touch_out'do
     it 'allows you to touch out'do
+      subject.top_up(OysterCard::MIN_BALANCE)
       subject.touch_in
       subject.touch_out
       expect(subject.in_journey?).to eq false
