@@ -24,6 +24,44 @@ describe OysterCard do
     end
   end
 
+  describe '#touch_in'do
+
+    it 'error when  oyster doesnt a minimum balance' do
+      expect{subject.touch_in(station)}.to raise_error 'not enough funds'
+    end
+
+
+  end
+
+
+    it 'deducts fare from balance'do
+      subject.top_up(OysterCard::MIN_BALANCE)
+      subject.touch_in(station)
+      expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
+    end
+  
+end
+    # it "allows you to touch in"do
+    #   subject.top_up(OysterCard::MIN_BALANCE)
+    #   subject.touch_in(station)
+    #   expect(subject.in_journey?).to eq true
+    # end
+
+  # describe '#touch_out'do
+  #   it 'allows you to touch out'do
+  #     subject.top_up(OysterCard::MIN_BALANCE)
+  #     subject.touch_in(station)
+  #     subject.touch_out(station)
+  #     expect(subject.in_journey?).to eq false
+  #   end
+
+  # let(:journey){ {entry_station: station, exit_station: station} }  
+  # it 'stores a journey' do
+  #   subject.top_up(OysterCard::MIN_BALANCE)
+  #   subject.touch_in(station) 
+  #   subject.touch_out(station)
+  #   expect(subject.journey_history).to include journey 
+  # end
 =begin this is a comment block because deduct is private =)
   describe '#deduct' do
   it 'demostrates tha the money is actually deducted' do
@@ -39,55 +77,4 @@ describe OysterCard do
   it { is_expected.to respond_to(:in_journey?) }
 =end
 
-  describe '#touch_in'do
-    it "allows you to touch in"do
-      subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in(station)
-      expect(subject.in_journey?).to eq true
-    end
-    it 'raise an error when the oyester does not have a minimum balance' do
-      expect{subject.touch_in(station)}.to raise_error 'not enough funds'
-    end
-    it 'will memorize the station where you get in' do
-      subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in(station)
-      expect(subject.entry_station).to eq station
-    end
-
-  end
-
-
-  describe '#touch_out'do
-    it 'allows you to touch out'do
-      subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in(station)
-      subject.touch_out(station)
-      expect(subject.in_journey?).to eq false
-    end
-    it 'deducts fare from balance'do
-      subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in(station)
-      expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
-    end
-    it 'the card forgets the station' do
-      subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in(station)
-      subject.touch_out(station)
-      expect(subject.entry_station).to eq nil
-      end
-  end
-
-  it 'has a journey history'do
-    expect(subject.journey_history).to be_empty
-  end
-
-  let(:journey){ {entry_station: station, exit_station: station} }  
-  it 'stores a journey' do
-    subject.top_up(OysterCard::MIN_BALANCE)
-    subject.touch_in(station) 
-    subject.touch_out(station)
-    expect(subject.journey_history).to include journey 
-  end
-
-end
 
