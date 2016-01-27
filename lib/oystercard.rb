@@ -1,20 +1,18 @@
 class Card
 
+MINIMUM_LIMIT = 1
 MAXIMUM_LIMIT = 90
 
 	attr_reader :balance, :limit
 
-	def initialize(limit=MAXIMUM_LIMIT)
+	def initialize
 		@balance = 0
-		@limit = limit
     @touch = false
-
 	end
 
 	def top_up(amount)
-		new_balance = @balance + amount
-		message = "You cannot exceed the £#{@limit} limit!"
-		raise (message) if new_balance > @limit
+		message = "You cannot exceed the £#{MAXIMUM_LIMIT} limit!"
+		raise (message) if max?(amount)
 		@balance += amount
 	end
 
@@ -23,6 +21,7 @@ MAXIMUM_LIMIT = 90
   end
 
   def touch_in
+    raise 'Insufficient money on your card!' if min?
     @touch = true
   end
 
@@ -32,6 +31,16 @@ MAXIMUM_LIMIT = 90
 
   def in_journey?
     @touch
+  end
+
+  private
+
+  def min?
+    @balance < MINIMUM_LIMIT
+  end
+
+  def max?(amount)
+    @balance + amount > MAXIMUM_LIMIT
   end
 
 end

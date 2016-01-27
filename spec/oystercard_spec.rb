@@ -3,6 +3,7 @@ require 'oystercard'
 RSpec.describe Card do
 
 limit = Card::MAXIMUM_LIMIT
+subject(:card) {described_class.new}  #enables you to replace subject with card (still creating new instance but easier to read)
 
 	it 'creates a new card' do
 		expect(Card.new).to be_a(Card)
@@ -11,7 +12,7 @@ limit = Card::MAXIMUM_LIMIT
 	context 'balance' do
 
 		it 'has a balance of zero' do
-		expect(subject.balance).to eq(0)
+		expect(card.balance).to eq(0)
 		end
 	end
 
@@ -20,27 +21,17 @@ limit = Card::MAXIMUM_LIMIT
 		it {is_expected.to respond_to(:top_up).with(1).argument }
 
 		it 'tops up the balance' do
-		expect{ subject.top_up(1) }.to change{ subject.balance }.by(1)
+		expect{card.top_up(1)}.to change{ card.balance }.by(1)
 		end
 
 	end
 
-	context 'limit' do
-
-		it {is_expected.to respond_to(:limit)}
-
-		it "has a limit of #{limit}" do
-		expect(subject.limit).to eq(limit)
-		end
-
-		it 'has a default limit' do
-		expect(subject.limit).to eq limit # Card::MAXIMUM_LIMIT
-		end
+	context 'maximum limit' do
 
 		it "cannot exceed #{limit}" do
 		message = "You cannot exceed the £#{limit} limit!"
-		subject.top_up(limit)  # the value needs to be less than the limit less what is topped up in test (so if default value = 90, and you top up 1 or more, you need value of 89 or less)
-		expect{subject.top_up(1)}.to raise_error(message)
+		card.top_up(limit)  # the value needs to be less than the limit less what is topped up in test (so if default value = 90, and you top up 1 or more, you need value of 89 or less)
+		expect{card.top_up(1)}.to raise_error(message)
 		end
 	end
 
@@ -49,19 +40,19 @@ limit = Card::MAXIMUM_LIMIT
     it { is_expected.to respond_to(:deduct).with(1).argument }
 
     it 'deducts from balance' do
-    expect{subject.deduct(1)}.to change{ subject.balance }.by(-1)
+    expect{card.deduct(1)}.to change{ card.balance }.by(-1)
     end
 
   end
 
   context 'card in use' do
 
-    it { is_expected.to respond_to(:touch_in)}
-    it { is_expected.to respond_to(:touch_out)}
-    it { is_expected.to respond_to(:in_journey?)}
+    it {is_expected.to respond_to(:touch_in)}
+    it {is_expected.to respond_to(:touch_out)}
+    it {is_expected.to respond_to(:in_journey?)}
 
     it 'it is not in a journey ?' do
-    expect(subject.in_journey?).to eq false
+    expect(card.in_journey?).to eq false
     end
 
   end
@@ -69,22 +60,27 @@ limit = Card::MAXIMUM_LIMIT
   context 'topped up' do
 
     it 'needs to be topped up' do
-    subject.top_up(limit)
+    card.top_up(limit)
     end
 
     it 'can touch in' do
-    subject.touch_in
-    expect(subject).to be_in_journey
+   	card.top_up(limit)
+    card.touch_in
+    expect(card).to be_in_journey
     end
 
+    it 'can only touch in with a minimum balance of £1' do
+    expect{card.touch_in}.to raise_error 'Insufficient money on your card!' 
+	end
+
     it 'can touch out' do
-    subject.touch_in
-    subject.touch_out
-    expect(subject).not_to be_in_journey
+    card.top_up(limit)
+    card.touch_in
+    card.touch_out
+    expect(card).not_to be_in_journey
     end
 
   end
-
 
 end
 
