@@ -4,6 +4,8 @@ RSpec.describe Card do
 
 limit = Card::MAXIMUM_LIMIT
 subject(:card) {described_class.new}  #enables you to replace subject with card (still creating new instance but easier to read)
+let(:station) {double(:station)}
+
 
 	it 'creates a new card' do
 		expect(Card.new).to be_a(Card)
@@ -65,27 +67,48 @@ subject(:card) {described_class.new}  #enables you to replace subject with card 
 
     it 'can touch in' do
    	card.top_up(limit)
-    card.touch_in
+    card.touch_in(station)
     expect(card).to be_in_journey
     end
 
     it 'can only touch in with a minimum balance of £1' do
-    expect{card.touch_in}.to raise_error 'Insufficient money on your card!' 
+    expect{card.touch_in(station)}.to raise_error 'Insufficient money on your card!' 
 	end
 
-    it 'can touch out' do
-    card.top_up(limit)
-    card.touch_in
-    card.touch_out
-    expect(card).not_to be_in_journey
-    end
+	context '#touch_out' do
 
-    it 'charges minimum fare at touch_out' do
-    card.top_up(5)
-    card.touch_in	
-    expect{card.touch_out}.to change{card.balance}.by (-(Card::MINIMUM_LIMIT))
-    end
+		before do
+		card.top_up(limit)
+		card.touch_in(station)
+		end
 
+	    it 'can touch out' do
+	    card.touch_out
+	    expect(card).not_to be_in_journey
+	    end
+
+	    it 'charges minimum fare at touch_out' do
+	    expect{card.touch_out}.to change{card.balance}.by (-(Card::MINIMUM_LIMIT))
+	    end
+  	end
+  end
+
+  context 'station identifier' do
+
+  	before do
+  	card.top_up(5)
+  	end
+
+  	it 'remembers entry station' do
+  	card.touch_in(station)
+  	expect(card.entry_station).to eq station
+  	end
+
+  	it 'forgets entry station when you touch out' do
+  	card.touch_in(station)
+  	card.touch_out
+  	expect(card.entry_station).to eq nil	
+  	end
   end
 
 end

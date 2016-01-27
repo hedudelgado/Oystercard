@@ -3,11 +3,11 @@ class Card
 MINIMUM_LIMIT = 1
 MAXIMUM_LIMIT = 90
 
-	attr_reader :balance, :limit
+	attr_reader :balance, :entry_station
 
 	def initialize
 		@balance = 0
-    @touch = false
+    @entry_station = nil
 	end
 
 	def top_up(amount)
@@ -20,18 +20,18 @@ MAXIMUM_LIMIT = 90
     @balance -= amount
   end
 
-  def touch_in
+  def touch_in(station)
     raise 'Insufficient money on your card!' if min?
-    @touch = true
+    @entry_station = station
   end
 
   def touch_out
-    @touch = false
+    @entry_station = nil
     @balance -= MINIMUM_LIMIT
   end
 
   def in_journey?
-    @touch
+    @entry_station != nil
   end
 
   private
