@@ -27,6 +27,7 @@ MAXIMUM_LIMIT = 90
 
   def touch_out
     @touch = false
+    @balance -= MINIMUM_LIMIT
   end
 
   def in_journey?

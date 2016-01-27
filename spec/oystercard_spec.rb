@@ -80,6 +80,12 @@ subject(:card) {described_class.new}  #enables you to replace subject with card 
     expect(card).not_to be_in_journey
     end
 
+    it 'charges minimum fare at touch_out' do
+    card.top_up(5)
+    card.touch_in	
+    expect{card.touch_out}.to change{card.balance}.by (-(Card::MINIMUM_LIMIT))
+    end
+
   end
 
 end
