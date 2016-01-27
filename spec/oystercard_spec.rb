@@ -1,6 +1,8 @@
-require "make_oystercard.rb"
+require "OysterCard"
 describe OysterCard do
+  
   let(:station){double :station}
+  
   it "Balance = 0" do
     expect(subject.balance).to eq 0
   end
@@ -21,7 +23,7 @@ describe OysterCard do
     end
   end
 
-=begin
+=begin this is a comment block because deduct is private =)
   describe '#deduct' do
   it 'demostrates tha the money is actually deducted' do
   subject.top_up(10)
@@ -79,16 +81,11 @@ describe OysterCard do
   end
 
   let(:journey){ {entry_station: station, exit_station: station} }  
-  #journey will be the variable we will 
-  #compare later on when I call include.. 
-  #station are the double we set at the top and we are including in journey variable
   it 'stores a journey' do
     subject.top_up(OysterCard::MIN_BALANCE)
-    subject.touch_in(station) #stations are the doubles we set in the beggining
+    subject.touch_in(station) 
     subject.touch_out(station)
     expect(subject.journey_history).to include journey 
-    #the the test pass the variables to touch_in and touch_out and journey history
-    #return the hash that is begin compared with {entry_station: station, exit_station: station} 
   end
 
 end
