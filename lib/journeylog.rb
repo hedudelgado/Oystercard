@@ -1,15 +1,16 @@
+require_relative 'oystercard.rb'
 class JourneyLog
 
-	attr_reader :current_journey
-
+	attr_reader :current
 	def initialize
 		@journey = []
-		@current_journey = {}
+		@current = {}
 	end
 
 	def start_journey(station)
-		@current_journey.clear
-		@current_journey[:entry] = station
+		# outstanding
+		@current.clear
+		@current[:entry] = station 
 		@journey.push("entry: #{station}")
 	end
 
@@ -18,12 +19,20 @@ class JourneyLog
 	end
 
 	def exit_journey(station)
-		@current_journey[:exit]  = station
+		@current[:exit]  = station
 		@journey.push("exit: #{station}")
 	end
 
+	# def outstanding
+	#  	if @journey.last == :entry then @current[:exit]= "incomplete journey, fare #{Journey::PENALTY_FARE} pounds."end	
+	# end
+
 	private
 
+	def current_journey #a private method #current_journey should return an incomplete 
+		#journey or create a new journey
+		@current	
+	end	
 	def history
 		@journey
 	end
