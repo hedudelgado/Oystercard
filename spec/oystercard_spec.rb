@@ -94,28 +94,23 @@ context 'topped up' do
  end
 end
 
-context 'station identifier' do
+context 'record journeys' do
 
- before do
-   card.top_up(5)
- end
+  before do
+  card.top_up(limit)
+  end
 
- it 'remembers entry station' do
-   card.touch_in(entry_station)
-   expect(card.entry_station).to eq entry_station
- end
+  it 'starts with empty journey history' do
+  expect(card.journey_history).to eq []
+  end
 
- it 'forgets entry station when you touch out' do
-   card.touch_in(entry_station)
-   card.touch_out(exit_station)
-   expect(card.entry_station).to eq nil
- end
-
- it 'remembers exit station' do
+  it 'saves current_journey to history when touch out' do
+  journey = {:entry_station => entry_station, :exit_station => exit_station}
   card.touch_in(entry_station)
   card.touch_out(exit_station)
-  expect(card.exit_station).to eq exit_station
+  expect(card.journey_history).to eq [journey]
   end
+
 end
 end
 
