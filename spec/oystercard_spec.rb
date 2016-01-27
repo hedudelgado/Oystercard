@@ -2,115 +2,121 @@ require 'oystercard'
 
 RSpec.describe Card do
 
-limit = Card::MAXIMUM_LIMIT
+  limit = Card::MAXIMUM_LIMIT
 subject(:card) {described_class.new}  #enables you to replace subject with card (still creating new instance but easier to read)
-let(:station) {double(:station)}
+let(:entry_station) {double(:station)}
+let(:exit_station) {double(:station)}
 
 
-	it 'creates a new card' do
-		expect(Card.new).to be_a(Card)
-	end
+it 'creates a new card' do
+  expect(Card.new).to be_a(Card)
+end
 
-	context 'balance' do
+context 'balance' do
 
-		it 'has a balance of zero' do
-		expect(card.balance).to eq(0)
-		end
-	end
+  it 'has a balance of zero' do
+    expect(card.balance).to eq(0)
+  end
+end
 
-	context 'top ups' do
+context 'top ups' do
 
-		it {is_expected.to respond_to(:top_up).with(1).argument }
+  it {is_expected.to respond_to(:top_up).with(1).argument }
 
-		it 'tops up the balance' do
-		expect{card.top_up(1)}.to change{ card.balance }.by(1)
-		end
+  it 'tops up the balance' do
+    expect{card.top_up(1)}.to change{ card.balance }.by(1)
+  end
 
-	end
+end
 
-	context 'maximum limit' do
+context 'maximum limit' do
 
-		it "cannot exceed #{limit}" do
-		message = "You cannot exceed the £#{limit} limit!"
+  it "cannot exceed #{limit}" do
+    message = "You cannot exceed the £#{limit} limit!"
 		card.top_up(limit)  # the value needs to be less than the limit less what is topped up in test (so if default value = 90, and you top up 1 or more, you need value of 89 or less)
 		expect{card.top_up(1)}.to raise_error(message)
-		end
-	end
+  end
+end
 
-  context 'deducts' do
+context 'deducts' do
 
-    it { is_expected.to respond_to(:deduct).with(1).argument }
+  it { is_expected.to respond_to(:deduct).with(1).argument }
 
-    it 'deducts from balance' do
+  it 'deducts from balance' do
     expect{card.deduct(1)}.to change{ card.balance }.by(-1)
-    end
-
   end
 
-  context 'card in use' do
+end
 
-    it {is_expected.to respond_to(:touch_in)}
-    it {is_expected.to respond_to(:touch_out)}
-    it {is_expected.to respond_to(:in_journey?)}
+context 'card in use' do
 
-    it 'it is not in a journey ?' do
+  it {is_expected.to respond_to(:touch_in)}
+  it {is_expected.to respond_to(:touch_out)}
+  it {is_expected.to respond_to(:in_journey?)}
+
+  it 'it is not in a journey ?' do
     expect(card.in_journey?).to eq false
-    end
-
   end
 
-  context 'topped up' do
+end
 
-    it 'needs to be topped up' do
+context 'topped up' do
+
+  it 'needs to be topped up' do
     card.top_up(limit)
-    end
+  end
 
-    it 'can touch in' do
-   	card.top_up(limit)
-    card.touch_in(station)
+  it 'can touch in' do
+    card.top_up(limit)
+    card.touch_in(entry_station)
     expect(card).to be_in_journey
+  end
+
+  it 'can only touch in with a minimum balance of £1' do
+    expect{card.touch_in(entry_station)}.to raise_error 'Insufficient money on your card!'
+  end
+
+  context '#touch_out' do
+
+    before do
+      card.top_up(limit)
+      card.touch_in(entry_station)
     end
 
-    it 'can only touch in with a minimum balance of £1' do
-    expect{card.touch_in(station)}.to raise_error 'Insufficient money on your card!' 
-	end
+    it 'can touch out' do
+     card.touch_out(exit_station)
+     expect(card).not_to be_in_journey
+   end
 
-	context '#touch_out' do
+   it 'charges minimum fare at touch_out' do
+     expect{card.touch_out(exit_station)}.to change{card.balance}.by (-(Card::MINIMUM_LIMIT))
+   end
+ end
+end
 
-		before do
-		card.top_up(limit)
-		card.touch_in(station)
-		end
+context 'station identifier' do
 
-	    it 'can touch out' do
-	    card.touch_out
-	    expect(card).not_to be_in_journey
-	    end
+ before do
+   card.top_up(5)
+ end
 
-	    it 'charges minimum fare at touch_out' do
-	    expect{card.touch_out}.to change{card.balance}.by (-(Card::MINIMUM_LIMIT))
-	    end
-  	end
+ it 'remembers entry station' do
+   card.touch_in(entry_station)
+   expect(card.entry_station).to eq entry_station
+ end
+
+ it 'forgets entry station when you touch out' do
+   card.touch_in(entry_station)
+   card.touch_out(exit_station)
+   expect(card.entry_station).to eq nil
+ end
+
+ it 'remembers exit station' do
+  card.touch_in(entry_station)
+  card.touch_out(exit_station)
+  expect(card.exit_station).to eq exit_station
   end
-
-  context 'station identifier' do
-
-  	before do
-  	card.top_up(5)
-  	end
-
-  	it 'remembers entry station' do
-  	card.touch_in(station)
-  	expect(card.entry_station).to eq station
-  	end
-
-  	it 'forgets entry station when you touch out' do
-  	card.touch_in(station)
-  	card.touch_out
-  	expect(card.entry_station).to eq nil	
-  	end
-  end
-
+end
 end
 
 
