@@ -2,7 +2,7 @@ require 'oystercard'
 
 RSpec.describe Card do
 
-  limit = Card::MAXIMUM_LIMIT
+limit = Card::MAXIMUM_LIMIT
 subject(:card) {described_class.new}  #enables you to replace subject with card (still creating new instance but easier to read)
 let(:entry_station) {double(:station)}
 let(:exit_station) {double(:station)}
