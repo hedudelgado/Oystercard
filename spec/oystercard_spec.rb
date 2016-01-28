@@ -2,7 +2,7 @@ require 'oystercard'
 
 RSpec.describe Card do
 
-limit = Card::MAXIMUM_LIMIT
+limit = Journey::MAXIMUM_LIMIT
 subject(:card) {described_class.new}  #enables you to replace subject with card (still creating new instance but easier to read)
 let(:entry_station) {double(:station)}
 let(:exit_station) {double(:station)}
@@ -38,27 +38,17 @@ context 'maximum limit' do
   end
 end
 
-context 'deducts' do
+# context 'deducts' do
 
-  it { is_expected.to respond_to(:deduct).with(1).argument }
+#   it { is_expected.to respond_to(:deduct).with(1).argument }
 
-  it 'deducts from balance' do
-    expect{card.deduct(1)}.to change{ card.balance }.by(-1)
-  end
+#   it 'deducts from balance' do
+#     expect{card.deduct(1)}.to change{ card.balance }.by(-1)
+#   end
 
-end
+# end
 
-context 'card in use' do
 
-  it {is_expected.to respond_to(:touch_in)}
-  it {is_expected.to respond_to(:touch_out)}
-  it {is_expected.to respond_to(:in_journey?)}
-
-  it 'it is not in a journey ?' do
-    expect(card.in_journey?).to eq false
-  end
-
-end
 
 context 'topped up' do
 
@@ -67,9 +57,7 @@ context 'topped up' do
   end
 
   it 'can touch in' do
-    card.top_up(limit)
-    card.touch_in(entry_station)
-    expect(card).to be_in_journey
+    expect{card.touch_in(entry_station)}.to raise_error 'Insufficient money on your card!'
   end
 
   it 'can only touch in with a minimum balance of £1' do
@@ -83,13 +71,8 @@ context 'topped up' do
       card.touch_in(entry_station)
     end
 
-    it 'can touch out' do
-     card.touch_out(exit_station)
-     expect(card).not_to be_in_journey
-   end
-
    it 'charges minimum fare at touch_out' do
-     expect{card.touch_out(exit_station)}.to change{card.balance}.by (-(Card::MINIMUM_LIMIT))
+     expect{card.touch_out(exit_station)}.to change{card.balance}.by (-(Journey::MINIMUM_LIMIT))
    end
  end
 end
