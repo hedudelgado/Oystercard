@@ -36,7 +36,7 @@ private
     @entry= false
     @exit = true
   end
-  
+
   def penalty_in
     if @entry == false and @exit  == true then @penalty = false else @penalty = true end
   end
