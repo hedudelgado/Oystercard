@@ -1,14 +1,15 @@
+require_relative 'journey'
+
 class Card
 
 MINIMUM_LIMIT = 1
 MAXIMUM_LIMIT = 90
 
-	attr_reader :balance, :journey_history
+	attr_reader :balance, :new_journey
 
 	def initialize
 		@balance = 0
-    @journey_history = []
-    @current_journey = {}
+    @new_journey = Journey.new
 	end
 
 	def top_up(amount)
@@ -17,35 +18,17 @@ MAXIMUM_LIMIT = 90
 		@balance += amount
 	end
 
-  def deduct(amount)
-    @balance -= amount
-  end
-
   def touch_in(station)
     raise 'Insufficient money on your card!' if min?
-    @current_journey[:entry_station] = station
+    @new_journey.touch_in_record(station)
   end
 
   def touch_out(station)
-    @current_journey[:exit_station] = station
-    save
-    reset
+    @new_journey.touch_out_record(station)
     @balance -= MINIMUM_LIMIT
   end
 
-  def in_journey?
-    @current_journey != {}
-  end
-
   private
-
-  def save
-    @journey_history << @current_journey
-  end
-
-  def reset
-    @current_journey = {}
-  end
 
   def min?
     @balance < MINIMUM_LIMIT
@@ -55,6 +38,9 @@ MAXIMUM_LIMIT = 90
     @balance + amount > MAXIMUM_LIMIT
   end
 
+  def deduct(amount)
+    @balance -= amount
+  end
 
 end
 
