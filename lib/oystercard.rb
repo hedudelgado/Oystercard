@@ -21,11 +21,11 @@ class OysterCard
       raise 'not enough funds' if MIN_BALANCE > @balance
       @journey.touch_in2(station)
       @journeylog.start_journey(station)
-      deduct(@journeylog.outstanding_charges)
+      deduct
     end
 
     def touch_out(station)
-      deduct(@journey.fare)
+      deduct
       @journey.touch_out2(station)
       @journeylog.exit_journey(station)
     end

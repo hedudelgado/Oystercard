@@ -29,25 +29,25 @@ describe JourneyLog do
 
     describe '#outstanding_charges' do
       it 'should close an incomplete journey and return its fare' do 
-        a = [{entry_station: station, trip: nil}]
+        journey = [{entry_station: station, trip: nil}]
         subject.start_journey(station)
         subject.start_journey(station)
-        expect(subject.journeys).to eq e 
+        expect(subject.journeys).to eq journey
       end
       it 'should close an incomplete 2nd case' do 
-        a = [{entry_station: station, exit_station: station},{trip: nil, exit_station: station}]
+        journey = [{entry_station: station, exit_station: station},{trip: nil, exit_station: station}]
         subject.start_journey(station)
         subject.exit_station(station)
         subject.exit_station(station)
-        expect(subject.journeys).to eq a
+        expect(subject.journeys).to eq journey
       end
        it 'should close an incomplete 2nd case' do 
-        a = [{entry_station: station, exit_station: station},{entry_station: station, trip: nil }]
+        journey = [{entry_station: station, exit_station: station},{entry_station: station, trip: nil }]
         subject.start_journey(station)
         subject.exit_station(station)
         subject.start_journey(station)
         subject.start_journey(station)
-        expect(subject.journeys).to eq a
+        expect(subject.journeys).to eq journey
       end
     end
 end
