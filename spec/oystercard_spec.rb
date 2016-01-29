@@ -42,7 +42,7 @@ describe OysterCard do
   
 
     # it "its charging right" do
-    #   subject.top_up(OysterCard::MIN_BALANCE + OysterCard::MIN_BALANCE)
+    #   subject.top_up(10)
     #   subject.touch_in(station)
     #   subject.touch_out(station)
     #   expect(subject.balance).to eq 0
