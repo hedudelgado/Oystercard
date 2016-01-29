@@ -14,7 +14,7 @@ class JourneyLog
 		@current.clear
 		if 	complete_in? then save_in_good(station) else save_in_penalty(station) end
 	end
-	
+
 	def journeys
 		history
 	end
@@ -23,6 +23,10 @@ class JourneyLog
 		if  complete_exit? then save_exit_good(station) else save_exit_penalty(station) end
 	end
 
+	def outstanding_charges
+		if complete_exit? then 1 else @journey.push("incomplete journey") and Journey::PENALTY_FARE end
+		if complete_in? then 1 else @journey.push("incomplete journey") and Journey::PENALTY_FARE end
+	end
 
 	private
 
@@ -43,10 +47,6 @@ class JourneyLog
 		outstanding_charges
 		@journey.push("entry: #{station}")
 		@completetracker = true
-	end
-
-	def outstanding_charges
-		@journey.push("incomplete journey, #{Journey::PENALTY_FARE} pounds")
 	end
 
 	def save_in_good(station)

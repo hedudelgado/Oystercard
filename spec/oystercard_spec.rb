@@ -40,41 +40,14 @@ describe OysterCard do
       expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
     end
   
-end
-    # it "allows you to touch in"do
-    #   subject.top_up(OysterCard::MIN_BALANCE)
+
+    # it "its charging right" do
+    #   subject.top_up(OysterCard::MIN_BALANCE + OysterCard::MIN_BALANCE)
     #   subject.touch_in(station)
-    #   expect(subject.in_journey?).to eq true
+    #   subject.touch_out(station)
+    #   expect(subject.balance).to eq 0
     # end
+  end 
 
-  # describe '#touch_out'do
-  #   it 'allows you to touch out'do
-  #     subject.top_up(OysterCard::MIN_BALANCE)
-  #     subject.touch_in(station)
-  #     subject.touch_out(station)
-  #     expect(subject.in_journey?).to eq false
-  #   end
-
-  # let(:journey){ {entry_station: station, exit_station: station} }  
-  # it 'stores a journey' do
-  #   subject.top_up(OysterCard::MIN_BALANCE)
-  #   subject.touch_in(station) 
-  #   subject.touch_out(station)
-  #   expect(subject.journey_history).to include journey 
-  # end
-=begin this is a comment block because deduct is private =)
-  describe '#deduct' do
-  it 'demostrates tha the money is actually deducted' do
-  subject.top_up(10)
-  expect{ subject.deduct 6}. to change{ subject.balance}.by -6
-  end
-
-  it 'return the amount deducted' do
-  subject.top_up(10)
-  expect(subject.deduct 6).to eq 6
-  end
-  end
-  it { is_expected.to respond_to(:in_journey?) }
-=end
 
 
