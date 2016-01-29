@@ -34,11 +34,11 @@ describe OysterCard do
   end
 
 
-    it 'deducts fare from balance'do
-      subject.top_up(OysterCard::MIN_BALANCE)
-      subject.touch_in(station)
-      expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
-    end
+    # it 'deducts fare from balance'do
+    #   subject.top_up(OysterCard::MIN_BALANCE)
+    #   subject.touch_in(station)
+    #   expect{subject.touch_out(station)}.to change{subject.balance}.by -OysterCard::MIN_BALANCE
+    # end
   
 
     # it "its charging right" do

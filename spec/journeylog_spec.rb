@@ -3,37 +3,44 @@ require 'journeylog.rb'
 describe JourneyLog do 
 	let(:station){double :station}
 
-	describe '#start_journey' do 	
-    	it 'will memorize the station where you start' do
-      		subject.start_journey(station)
-      		expect(subject.current).to include(:entry => station)
-    	end
-      it 'will check if the journey is completed' do 
-          subject.start_journey(station)
-          subject.start_journey(station)
-          expect(subject.journeys).to eq ["entry: #{station}","incomplete journey", "entry: #{station}"]
+  describe '#start_journey' do 
+    it 'should start a new journey with an entry station' do 
+      subject.start_journey(station)
+      expect(subject.current).to eq ({entry_station: station})
+    end
+  end
+ 
+
+  describe '#journeys' do 
+    it '#journeys should return a list of all previous journeys' do 
+      cheat = [{entry_station: station, exit_station: station},{entry_station: station, exit_station: station}]
+      subject.start_journey(station)
+      subject.exit_station(station)
+      subject.start_journey(station)
+      subject.exit_station(station)
+      expect(subject.journeys).to eq cheat
+    end
+    it 'should add a new exit station to the current_journey' do 
+      subject.start_journey(station)
+      subject.exit_station(station)
+      expect(subject.journeys).to eq([{entry_station: station, exit_station: station}])
+    end
+  end
+
+    describe '#outstanding_charges' do
+      it 'should close an incomplete journey and return its fare' do 
+        e = [{entry_station: station, trip: nil}]
+        subject.start_journey(station)
+        subject.start_journey(station)
+        expect(subject.journeys).to eq e 
       end
-
-    end
-  describe '#exit_journey' do 	
-    	it ' should add a new exit station to the current journey' do
-      		subject.start_journey(station)
-      		subject.exit_journey(station)
-      		expect(subject.current).to include(:entry => station, :exit => station)
-      	end
-        it ' should add a incomplete trip' do
-          subject.exit_journey(station)
-          expect(subject.journeys).to eq ["incomplete journey", "exit: #{station}"]
-        end
-    end
-
-    describe '#journeys' do 
-    	it 'return the history' do 
-    		subject.start_journey(station)
-      		subject.exit_journey(station)
-      		subject.start_journey(station)
-      		subject.exit_journey(station)
-      		expect(subject.journeys).to eq ["entry: #{station}","exit: #{station}","entry: #{station}","exit: #{station}"]
-      	end  
+      it 'should close an incomplete 2nd case' do 
+        a = [{entry_station: station, exit_station: station},{entry_station: station, trip: nil}]
+        subject.start_journey(station)
+        subject.exit_station(station)
+        subject.exit_station(station)
+        expect(subject.journeys).to eq a
+      end
     end
 end
+
